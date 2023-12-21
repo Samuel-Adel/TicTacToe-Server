@@ -1,23 +1,30 @@
-package server;
+package screen.server_screen;
 
+import base.ServerBase;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
-public class ServerBase extends AnchorPane {
+public class ServerBaseScreen extends AnchorPane {
 
     protected final ImageView backgroundImage;
     protected final Label serverLabel;
     protected final Button startStopButton;
+    private final ServerBase myServer;
 
-    public ServerBase() {
+    public ServerBaseScreen(Stage stage) {
         backgroundImage = new ImageView();
         serverLabel = new Label();
         startStopButton = new Button();
-
+        myServer = new ServerBase();
         setMaxHeight(USE_PREF_SIZE);
         setMaxWidth(USE_PREF_SIZE);
         setMinHeight(USE_PREF_SIZE);
@@ -47,8 +54,18 @@ public class ServerBase extends AnchorPane {
         startStopButton.setFont(new Font("Comic Sans MS Bold", 20.0));
         startStopButton.setOnAction((event) -> {
             if (startStopButton.getText().equals("Start")) {
+                try {
+                    myServer.startServer();
+                } catch (IOException ex) {
+                    Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 startStopButton.setText("Stop");
             } else {
+                try {
+                    myServer.closeServer();
+                } catch (IOException ex) {
+                    Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 startStopButton.setText("Start");
             }
 
@@ -61,6 +78,13 @@ public class ServerBase extends AnchorPane {
                 + "-fx-background-radius: 10; "
                 + "-fx-border-radius: 10;"
         );
+        stage.setOnCloseRequest((event) -> {
+            try {
+                myServer.closeServer();
+            } catch (IOException ex) {
+                Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
         getChildren().add(backgroundImage);
         getChildren().add(serverLabel);
         getChildren().add(startStopButton);
