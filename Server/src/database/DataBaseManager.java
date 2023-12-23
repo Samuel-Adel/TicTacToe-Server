@@ -24,7 +24,7 @@ import screen.server_screen.ServerBaseScreen;
 public class DataBaseManager {
 
     Stage stage;
-    Connection con;
+    public  Connection con;
 
     public DataBaseManager() {
 
