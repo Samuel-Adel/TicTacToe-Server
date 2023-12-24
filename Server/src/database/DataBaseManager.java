@@ -20,7 +20,7 @@ import org.apache.derby.jdbc.ClientDriver;
 public class DataBaseManager {
 
     Stage stage;
-    Connection con;
+    public  Connection con;
 
     public DataBaseManager() {
 

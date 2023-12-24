@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 package base;
-
 import handlers.PlayerHandler;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -12,6 +11,16 @@ import java.net.Socket;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
+import models.Registration;
+import server.Server;
+
 
 /**
  *
