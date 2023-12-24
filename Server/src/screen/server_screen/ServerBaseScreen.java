@@ -2,6 +2,10 @@ package screen.server_screen;
 
 import base.ServerBase;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -19,7 +23,7 @@ public class ServerBaseScreen extends AnchorPane {
     protected final Label serverLabel;
     protected final Button startStopButton;
     private final ServerBase myServer;
-
+    
     public ServerBaseScreen(Stage stage) {
         backgroundImage = new ImageView();
         serverLabel = new Label();

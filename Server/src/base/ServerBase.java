@@ -6,9 +6,7 @@
 package base;
 
 import handlers.PlayerHandler;
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Vector;
@@ -20,7 +18,8 @@ import java.util.logging.Logger;
  * @author Sasa Adel
  */
 public class ServerBase {
-private Vector<Socket> clientsVector // what is the difference
+
+    private Vector<Socket> clientsVector // what is the difference
             = new Vector<Socket>();
     public ServerSocket myServerSocket;
     protected volatile boolean isOn = false;
