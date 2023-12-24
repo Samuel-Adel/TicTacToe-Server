@@ -25,9 +25,9 @@ private Vector<Socket> clientsVector // what is the difference
     public ServerSocket myServerSocket;
     protected volatile boolean isOn = false;
     Socket s;
-    DataInputStream ear;
+
     Thread serverThread;
-    PrintStream mouth;
+ 
 
     public ServerBase() {
         System.out.println("Server object created");
