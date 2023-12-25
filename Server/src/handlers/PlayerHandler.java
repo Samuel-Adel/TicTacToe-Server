@@ -14,6 +14,10 @@ package handlers;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import helpers.LoginDB;
+import com.google.gson.Gson;
+import database.DataBaseManager;
+import helpers.RequestTypes;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -22,6 +26,12 @@ import java.net.SocketException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import models.JsonReceiveBase;
+import models.JsonSendBase;
+import models.LoginResponseModel;
+import models.LoginSendModel;
+import models.Registration;
+//import org.json.JSONObject;
 
 /**
  *
@@ -29,21 +39,25 @@ import java.util.logging.Logger;
  */
 public class PlayerHandler extends Thread {
 
+    static private DataBaseManager dbManager;
     static int numberOfClients = 0;
-    static int tryReset = 0;
-    DataInputStream ear;
-    PrintStream mouth;
-    private Socket sc;
-    String str;
+    private DataInputStream ear;
+    private PrintStream mouth;
+    private Socket currentSocket;
+    private String clientMsg;
+    private JsonReceiveBase jsonRecieveBase;
+    JsonSendBase jsonSendBase;
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
 
-    public PlayerHandler(Socket cs) {
+    public PlayerHandler(Socket currentSocketParameter) {
+        dbManager = new DataBaseManager();
         numberOfClients++;
         try {
-            sc = cs;
-            ear = new DataInputStream(cs.getInputStream());
-            mouth = new PrintStream(cs.getOutputStream());
+            jsonSendBase = new JsonSendBase();
+            currentSocket = currentSocketParameter;
+            ear = new DataInputStream(currentSocketParameter.getInputStream());
+            mouth = new PrintStream(currentSocketParameter.getOutputStream());
             mouth.println("Data Recieved CHat handler");
             PlayerHandler.clientsVector.add(this);
             start();
@@ -57,18 +71,14 @@ public class PlayerHandler extends Thread {
     public void run() {
         try {
 
-            while (ear != null && sc.isClosed() == false && (str = ear.readLine()) != null) {
-                if (str.equals("Exit")) {
-                    numberOfClients--;
-                    
-                    continue;
-                }
-                sendMessageToAll(str);
+            while (ear != null && currentSocket.isClosed() == false && (clientMsg = ear.readLine()) != null) {
+                handleOperation(clientMsg);
+
             }
         } catch (SocketException ex) {
             System.out.println(ex.getMessage() + "\n");
             try {
-                sc.close();
+                currentSocket.close();
                 ear.close();
                 mouth.close();
             } catch (IOException ex1) {
@@ -86,4 +96,58 @@ public class PlayerHandler extends Thread {
             ch.mouth.println(msg);
         });
     }
+
+    private void handleOperation(String clientMessage) {
+        jsonRecieveBase = JsonWrapper.fromJson(clientMsg, JsonReceiveBase.class);
+
+//        String[] parts = clientMsg.split(" ", 2); // hna bfok el msg L 2 parts "mode" + json
+//        String mode = parts[0];
+//        String jsonData = parts.length > 1 ? parts[1] : "";
+//        System.out.println("mode" + mode);//bgrb bs eno faslhom
+//        System.out.println("json" + jsonData);//bgrb bs eno faslhom
+//
+//        if ("Register".equals(mode)) {
+//            // Handle registration
+//            // gson 
+//            Gson gson = new Gson();
+//            Registration registrationData = gson.fromJson(jsonData, Registration.class);
+//            //  System.out.println(registrationData);
+//            Registration player = new Registration();
+//            player = registrationData.registerPlayer(registrationData.getUsername(), registrationData.getPassword());
+//
+//            if (player.getUsername() != null) {
+//                mouth.println("ok");
+//            } else {
+//                mouth.println("exist");
+//            }
+//
+//        } else
+        if (jsonRecieveBase.getType().equals(RequestTypes.Login.name())) {
+            jsonSendBase.setType(RequestTypes.Login.name());
+            LoginSendModel logineSendModel = new LoginSendModel();
+            String jsonSend;
+            LoginDB loginDB;
+            LoginResponseModel loginResponseModel;
+
+            loginResponseModel = JsonWrapper.fromJson(clientMsg, LoginResponseModel.class);
+            System.out.println(loginResponseModel);
+            System.out.println(loginResponseModel.getUserName());
+            loginDB = new LoginDB(loginResponseModel, dbManager);
+            jsonSendBase.setMessge(loginDB.userLogin());
+            jsonSendBase.setStatus(loginDB.checkLoginOperation());
+
+            if (jsonSendBase.getStatus() == 1) {
+                logineSendModel.setPlayerData(loginDB.getPlayerData(), jsonSendBase.getMessge(), jsonSendBase.getStatus());
+                jsonSend = JsonWrapper.toJson(logineSendModel);
+                System.out.println(jsonSend);
+                sendMessageToAll(jsonSend);
+            } else {
+                jsonSend = JsonWrapper.toJson(jsonSendBase);
+                System.out.println(jsonSend);
+                sendMessageToAll(jsonSend);
+            }
+        }
+
+    }
+
 }

@@ -7,15 +7,11 @@ package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import org.apache.derby.jdbc.ClientDriver;
-import screen.server_screen.ServerBaseScreen;
 
 /**
  *
