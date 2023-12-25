@@ -9,10 +9,12 @@ package models;
  *
  * @author Sasa Adel
  */
-public class LoginModel extends JsonBase{
-   private String userName;
- private   String password;
-     public String getUserName() {
+public class LoginResponseModel extends JsonReceiveBase {
+
+    private String userName;
+    private String password;
+
+    public String getUserName() {
         return userName;
     }
 
@@ -27,6 +29,5 @@ public class LoginModel extends JsonBase{
     public void setPassword(String password) {
         this.password = password;
     }
-  
-    
+
 }

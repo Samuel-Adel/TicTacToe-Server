@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package base;
+package helpers;
 
 import database.DataBaseManager;
 import java.sql.PreparedStatement;
@@ -11,7 +11,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import models.LoginModel;
+import models.LoginResponseModel;
+import Entity.Player;
+import database.DataBaseManager;
 
 /**
  *
@@ -19,20 +21,20 @@ import models.LoginModel;
  */
 public class LoginDB {
 
-    public LoginModel loginModel;
+    public LoginResponseModel loginModel;
     public DataBaseManager dataBaseManager;
     private PreparedStatement loginStatement;
     private ResultSet loginStatmentResult;
     private String message;
+    private Player player;
 
-    public LoginDB(LoginModel loginModel, DataBaseManager dataBaseManager) {
+    public LoginDB(LoginResponseModel loginModel, DataBaseManager dataBaseManager) {
         this.dataBaseManager = dataBaseManager;
         this.loginModel = loginModel;
     }
 
     public String userLogin() {
         try {
-
             if (checkUserName()) {
                 if (checkUserPassword()) {
                     message = "Loggedin Successfully";
@@ -46,7 +48,7 @@ public class LoginDB {
                 return "User Name Not Found";
             }
         } catch (SQLException ex) {
-            message=ex.toString();
+            message = ex.toString();
             return ex.toString();
         }
     }
@@ -56,6 +58,10 @@ public class LoginDB {
         loginStatement.setString(1, loginModel.getUserName());
         loginStatmentResult = loginStatement.executeQuery();
         if (loginStatmentResult.next()) {
+            player.setId(loginStatmentResult.getInt("id"));
+            player.setStatus(loginStatmentResult.getInt("status"));
+            player.setScore(loginStatmentResult.getInt("score"));
+            player.setUserName(loginStatmentResult.getString("user_name"));
             return true;
         } else {
             return false;
@@ -73,17 +79,17 @@ public class LoginDB {
         }
     }
 
-    public boolean checkLoginOperation() {
+    public int checkLoginOperation() {
         switch (message) {
             case "Loggedin Successfully":
-                return true;
-            case "Inorrect Password":
-                return false;
-            case "User Name Not Found":
-                return false;
+                return 1;
             default:
-                return false;
+                return 0;
         }
 
+    }
+
+    public Player getPlayerData() {
+        return player;
     }
 }
