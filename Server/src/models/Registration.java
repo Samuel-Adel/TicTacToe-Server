@@ -84,9 +84,7 @@ public class Registration {
             } else {
 
                 PreparedStatement pst = connection.con.prepareStatement("INSERT INTO ROOT.PLAYER (user_name,Password,Score,Status) VALUES ( ? ,? , ? , ?)");
-
                 pst.setString(1, userName);
-
                 pst.setString(2, password);
                 pst.setInt(3, 0);
                 pst.setInt(4, 0);

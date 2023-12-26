@@ -5,6 +5,7 @@
         <group>
             <file>file:/F:/ITI/Native%20Mobile%20Data/Java/TicTacToe-Server/Server/src/base/ServerBase.java</file>
             <file>file:/F:/ITI/Native%20Mobile%20Data/Java/TicTacToe-Server/Server/src/database/DataBaseManager.java</file>
+            <file>file:/F:/ITI/Native%20Mobile%20Data/Java/TicTacToe-Server/Server/src/handlers/JsonWrapper.java</file>
         </group>
     </open-files>
 </project-private>
