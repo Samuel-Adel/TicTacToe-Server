@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Omar
  */
-public class Registration {
+public class Registration extends JsonReceiveBase{
 
     private String firstName;
     private String lastName;
