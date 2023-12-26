@@ -58,7 +58,6 @@ public class PlayerHandler extends Thread {
             currentSocket = currentSocketParameter;
             ear = new DataInputStream(currentSocketParameter.getInputStream());
             mouth = new PrintStream(currentSocketParameter.getOutputStream());
-            mouth.println("Data Recieved CHat handler");
             PlayerHandler.clientsVector.add(this);
             start();
         } catch (IOException ex) {
@@ -99,6 +98,8 @@ public class PlayerHandler extends Thread {
 
     private void handleOperation(String clientMessage) {
         jsonRecieveBase = JsonWrapper.fromJson(clientMsg, JsonReceiveBase.class);
+
+        System.out.println("ss" + jsonRecieveBase.getType());
 
 //        String[] parts = clientMsg.split(" ", 2); // hna bfok el msg L 2 parts "mode" + json
 //        String mode = parts[0];
@@ -146,6 +147,29 @@ public class PlayerHandler extends Thread {
                 System.out.println(jsonSend);
                 sendMessageToAll(jsonSend);
             }
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.Register.name())) {
+            String jsonSend;
+            System.out.println("Test Server:Omar :" + jsonRecieveBase);
+            jsonSendBase.setType(RequestTypes.Register.name());
+            Gson gson = new Gson();
+            Registration registrationData = JsonWrapper.fromJson(clientMsg, Registration.class);
+            Registration player = new Registration();
+            player = registrationData.registerPlayer(registrationData.getUsername(), registrationData.getPassword());
+
+            if (player.getUsername() != null) {
+
+                jsonSendBase.setStatus(1);
+                jsonSendBase.setMessge("Registration Successfull");
+                System.out.println(jsonSendBase.getType() + " " + jsonSendBase.getMessge() + " " + jsonSendBase.getStatus());
+                jsonSend = JsonWrapper.toJson(jsonSendBase);
+                mouth.println(jsonSend);
+            } else {
+                jsonSendBase.setStatus(0);
+                jsonSendBase.setMessge("Registration Faild, The Username Exist before");
+                jsonSend = JsonWrapper.toJson(jsonSendBase);
+                mouth.println(jsonSend);
+            }
+
         }
 
     }
