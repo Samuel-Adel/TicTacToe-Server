@@ -46,7 +46,7 @@ public class PlayerHandler extends Thread {
     private Socket currentSocket;
     private String clientMsg;
     private JsonReceiveBase jsonRecieveBase;
-    JsonSendBase jsonSendBase;
+  private  JsonSendBase jsonSendBase;
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
 
@@ -138,7 +138,7 @@ public class PlayerHandler extends Thread {
             jsonSendBase.setStatus(loginDB.checkLoginOperation());
 
             if (jsonSendBase.getStatus() == 1) {
-                logineSendModel.setPlayerData(loginDB.getPlayerData(), jsonSendBase.getMessge(), jsonSendBase.getStatus());
+                logineSendModel.setPlayerData(loginDB.getPlayerData(), jsonSendBase);
                 jsonSend = JsonWrapper.toJson(logineSendModel);
                 System.out.println(jsonSend);
                 sendMessageToAll(jsonSend);

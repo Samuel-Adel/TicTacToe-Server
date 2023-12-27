@@ -31,6 +31,7 @@ public class LoginDB {
     public LoginDB(LoginResponseModel loginModel, DataBaseManager dataBaseManager) {
         this.dataBaseManager = dataBaseManager;
         this.loginModel = loginModel;
+        player=new Player();
     }
 
     public String userLogin() {
@@ -54,14 +55,10 @@ public class LoginDB {
     }
 
     private boolean checkUserName() throws SQLException {
-        loginStatement = dataBaseManager.con.prepareStatement("Select user_name from player Where user_name = ?");
+        loginStatement = dataBaseManager.con.prepareStatement("Select user_name from PLAYER Where user_name = ?");
         loginStatement.setString(1, loginModel.getUserName());
         loginStatmentResult = loginStatement.executeQuery();
-        if (loginStatmentResult.next()) {
-            player.setId(loginStatmentResult.getInt("id"));
-            player.setStatus(loginStatmentResult.getInt("status"));
-            player.setScore(loginStatmentResult.getInt("score"));
-            player.setUserName(loginStatmentResult.getString("user_name"));
+        if (loginStatmentResult.next()) {           
             return true;
         } else {
             return false;
@@ -69,10 +66,14 @@ public class LoginDB {
     }
 
     private boolean checkUserPassword() throws SQLException {
-        loginStatement = dataBaseManager.con.prepareStatement("Select user_name from player Where password = ?");
+        loginStatement = dataBaseManager.con.prepareStatement("Select * from player Where password = ?");
         loginStatement.setString(1, loginModel.getPassword());
         loginStatmentResult = loginStatement.executeQuery();
         if (loginStatmentResult.next()) {
+            player.setId(loginStatmentResult.getInt("PLAYER_ID"));
+            player.setStatus(loginStatmentResult.getInt("Status"));
+            player.setScore(loginStatmentResult.getInt("Score"));
+            player.setUserName(loginStatmentResult.getString("user_name"));
             return true;
         } else {
             return false;
