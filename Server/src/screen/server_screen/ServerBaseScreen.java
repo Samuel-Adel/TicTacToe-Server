@@ -1,7 +1,11 @@
 package screen.server_screen;
 
 import base.ServerBase;
+import database.DataBaseManager;
 import java.io.IOException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Button;
@@ -29,7 +33,6 @@ public class ServerBaseScreen extends AnchorPane {
         lableOnnlinePlayers = new Label();
         lableNumOfPlayers = new Label();
         myServer = new ServerBase();
-
 
         setMaxHeight(USE_PREF_SIZE);
         setMaxWidth(USE_PREF_SIZE);
@@ -69,7 +72,6 @@ public class ServerBaseScreen extends AnchorPane {
             }
         });
 
-
         label0.setLayoutX(50.0);
         label0.setLayoutY(99.0);
         label0.setText("Number of players");
@@ -101,10 +103,13 @@ public class ServerBaseScreen extends AnchorPane {
         getChildren().add(lableOnnlinePlayers);
         getChildren().add(lableNumOfPlayers);
         serverButton();
+        getNumOfPlayers();
+        getNumOfOnlinePlayers();
 
     }
-    private void serverButton(){
-    startStopButton.setOnAction((event) -> {
+
+    private void serverButton() {
+        startStopButton.setOnAction((event) -> {
             if (startStopButton.getText().equals("Start")) {
                 try {
                     myServer.startServer();
@@ -122,6 +127,53 @@ public class ServerBaseScreen extends AnchorPane {
             }
 
         });
-        
+
     }
+
+    private void getNumOfPlayers() {
+        DataBaseManager connection = new DataBaseManager();
+        new Thread(() -> {
+            try {
+                PreparedStatement preparedStatementAllPlayers = connection.con.prepareStatement("SELECT COUNT(*) AS num_rows FROM player");
+
+                ResultSet resultSet = preparedStatementAllPlayers.executeQuery();
+                if (resultSet.next()) {
+                    int numOfPlayers = resultSet.getInt("num_rows");
+
+                    lableNumOfPlayers.setText(String.valueOf(numOfPlayers));
+                }
+
+                resultSet.close();
+                preparedStatementAllPlayers.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }).start();
+
+    }
+
+    private void getNumOfOnlinePlayers() {
+        DataBaseManager connection = new DataBaseManager();
+        new Thread(() -> {
+
+            try {
+                PreparedStatement preparedStatementAllPlayers = connection.con.prepareStatement("SELECT COUNT(*) AS num_rows FROM player where status = 1");
+
+                ResultSet resultSet = preparedStatementAllPlayers.executeQuery();
+                if (resultSet.next()) {
+                    int numOfPlayers = resultSet.getInt("num_rows");
+
+                    lableOnnlinePlayers.setText(String.valueOf(numOfPlayers));
+                }
+
+                resultSet.close();
+                preparedStatementAllPlayers.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+        }).start();
+
+    }
+
 }
