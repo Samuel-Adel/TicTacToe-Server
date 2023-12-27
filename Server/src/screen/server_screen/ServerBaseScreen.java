@@ -133,20 +133,22 @@ public class ServerBaseScreen extends AnchorPane {
     private void getNumOfPlayers() {
         DataBaseManager connection = new DataBaseManager();
         new Thread(() -> {
-            try {
-                PreparedStatement preparedStatementAllPlayers = connection.con.prepareStatement("SELECT COUNT(*) AS num_rows FROM player");
+            while (true) {
+                try {
+                    PreparedStatement preparedStatementAllPlayers = connection.con.prepareStatement("SELECT COUNT(*) AS num_rows FROM player");
 
-                ResultSet resultSet = preparedStatementAllPlayers.executeQuery();
-                if (resultSet.next()) {
-                    int numOfPlayers = resultSet.getInt("num_rows");
+                    ResultSet resultSet = preparedStatementAllPlayers.executeQuery();
+                    if (resultSet.next()) {
+                        int numOfPlayers = resultSet.getInt("num_rows");
 
-                    lableNumOfPlayers.setText(String.valueOf(numOfPlayers));
+                        lableNumOfPlayers.setText(String.valueOf(numOfPlayers));
+                    }
+
+                    resultSet.close();
+                    preparedStatementAllPlayers.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-                resultSet.close();
-                preparedStatementAllPlayers.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
             }
         }).start();
 
@@ -155,21 +157,23 @@ public class ServerBaseScreen extends AnchorPane {
     private void getNumOfOnlinePlayers() {
         DataBaseManager connection = new DataBaseManager();
         new Thread(() -> {
+            while (true) {
 
-            try {
-                PreparedStatement preparedStatementAllPlayers = connection.con.prepareStatement("SELECT COUNT(*) AS num_rows FROM player where status = 1");
+                try {
+                    PreparedStatement preparedStatementAllPlayers = connection.con.prepareStatement("SELECT COUNT(*) AS num_rows FROM player where status = 1");
 
-                ResultSet resultSet = preparedStatementAllPlayers.executeQuery();
-                if (resultSet.next()) {
-                    int numOfPlayers = resultSet.getInt("num_rows");
+                    ResultSet resultSet = preparedStatementAllPlayers.executeQuery();
+                    if (resultSet.next()) {
+                        int numOfPlayers = resultSet.getInt("num_rows");
 
-                    lableOnnlinePlayers.setText(String.valueOf(numOfPlayers));
+                        lableOnnlinePlayers.setText(String.valueOf(numOfPlayers));
+                    }
+
+                    resultSet.close();
+                    preparedStatementAllPlayers.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-                resultSet.close();
-                preparedStatementAllPlayers.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
             }
 
         }).start();
