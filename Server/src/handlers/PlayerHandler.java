@@ -46,7 +46,7 @@ public class PlayerHandler extends Thread {
     private Socket currentSocket;
     private String clientMsg;
     private JsonReceiveBase jsonRecieveBase;
-    JsonSendBase jsonSendBase;
+   private JsonSendBase jsonSendBase;
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
 
