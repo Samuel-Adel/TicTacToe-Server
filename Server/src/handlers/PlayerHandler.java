@@ -46,7 +46,10 @@ public class PlayerHandler extends Thread {
     private Socket currentSocket;
     private String clientMsg;
     private JsonReceiveBase jsonRecieveBase;
-   private JsonSendBase jsonSendBase;
+
+
+  private  JsonSendBase jsonSendBase;
+
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
 
@@ -99,6 +102,8 @@ public class PlayerHandler extends Thread {
     private void handleOperation(String clientMessage) {
         jsonRecieveBase = JsonWrapper.fromJson(clientMsg, JsonReceiveBase.class);
 
+        System.out.println("ss" + jsonRecieveBase.getType());
+
 //        String[] parts = clientMsg.split(" ", 2); // hna bfok el msg L 2 parts "mode" + json
 //        String mode = parts[0];
 //        String jsonData = parts.length > 1 ? parts[1] : "";
@@ -136,7 +141,7 @@ public class PlayerHandler extends Thread {
             jsonSendBase.setStatus(loginDB.checkLoginOperation());
 
             if (jsonSendBase.getStatus() == 1) {
-                logineSendModel.setPlayerData(loginDB.getPlayerData(), jsonSendBase.getMessge(), jsonSendBase.getStatus());
+                logineSendModel.setPlayerData(loginDB.getPlayerData(), jsonSendBase);
                 jsonSend = JsonWrapper.toJson(logineSendModel);
                 System.out.println(jsonSend);
                 sendMessageToAll(jsonSend);
@@ -145,6 +150,29 @@ public class PlayerHandler extends Thread {
                 System.out.println(jsonSend);
                 sendMessageToAll(jsonSend);
             }
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.Register.name())) {
+            String jsonSend;
+            System.out.println("Test Server:Omar :" + jsonRecieveBase);
+            jsonSendBase.setType(RequestTypes.Register.name());
+            Gson gson = new Gson();
+            Registration registrationData = JsonWrapper.fromJson(clientMsg, Registration.class);
+            Registration player = new Registration();
+            player = registrationData.registerPlayer(registrationData.getUsername(), registrationData.getPassword());
+
+            if (player.getUsername() != null) {
+
+                jsonSendBase.setStatus(1);
+                jsonSendBase.setMessge("Registration Successfull");
+                System.out.println(jsonSendBase.getType() + " " + jsonSendBase.getMessge() + " " + jsonSendBase.getStatus());
+                jsonSend = JsonWrapper.toJson(jsonSendBase);
+                mouth.println(jsonSend);
+            } else {
+                jsonSendBase.setStatus(0);
+                jsonSendBase.setMessge("Registration Faild, The Username Exist before");
+                jsonSend = JsonWrapper.toJson(jsonSendBase);
+                mouth.println(jsonSend);
+            }
+
         }
 
     }

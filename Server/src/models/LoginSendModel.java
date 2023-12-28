@@ -36,13 +36,14 @@ public class LoginSendModel extends JsonSendBase {
         this.userName = userName;
     }
 
-    public void setPlayerData(Player player, String message, int status) {
+    public void setPlayerData(Player player, JsonSendBase jsonSendBase) {
         id = player.getId();
         userName = player.getUserName();
         playerStatus = player.getStatus();
         score = player.getScore();
-        this.requestStatus = status;
-        this.requestMessage = message;
+        this.requestStatus = jsonSendBase.getStatus();
+        this.requestMessage = jsonSendBase.getMessge();
+        this.requestType=jsonSendBase.getType();
     }
 
     public int getScore() {

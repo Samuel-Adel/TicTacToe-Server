@@ -10,6 +10,6 @@ package helpers;
  * @author Sasa Adel
  */
 public enum RequestTypes {
-    Login, Resgister, Join, Move
+    Login, Register, Join, Move
 
 }
