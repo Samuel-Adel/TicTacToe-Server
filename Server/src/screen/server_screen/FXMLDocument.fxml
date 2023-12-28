@@ -28,7 +28,7 @@
             <Font name="Comic Sans MS Bold" size="25.0" />
          </font>
       </Label>
-      <Label fx:id="lableOnnlinePlayers" layoutX="637.0" layoutY="187.0" text="0" textFill="#fcd015">
+      <Label fx:id="lableNumOfOnlinePlayers" layoutX="637.0" layoutY="187.0" text="0" textFill="#fcd015">
          <font>
             <Font name="Comic Sans MS Bold" size="25.0" />
          </font>
