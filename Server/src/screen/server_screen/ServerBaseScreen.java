@@ -105,10 +105,8 @@ public class ServerBaseScreen extends AnchorPane {
                     Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 startStopButton.setText("Stop");
-                
+
             } else {
-                lableNumOfOnlinePlayers.setText("0");
-                lableNumOfPlayers.setText("0");
                 try {
                     server.closeServer();
 
