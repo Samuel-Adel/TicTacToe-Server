@@ -89,10 +89,9 @@ public class ServerBaseScreen extends AnchorPane {
         getChildren().add(label1);
         getChildren().add(lableNumOfOnlinePlayers);
         getChildren().add(lableNumOfPlayers);
-        
+
         serverButton();
-        getNumOfOnlinePlayers();
-        getNumOfPlayers();
+
     }
 
     private void serverButton() {
@@ -100,13 +99,19 @@ public class ServerBaseScreen extends AnchorPane {
             if (startStopButton.getText().equals("Start")) {
                 try {
                     server.startServer();
+                    getNumOfOnlinePlayers();
+                    getNumOfPlayers();
                 } catch (IOException ex) {
                     Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 startStopButton.setText("Stop");
+                
             } else {
+                lableNumOfOnlinePlayers.setText("0");
+                lableNumOfPlayers.setText("0");
                 try {
                     server.closeServer();
+
                 } catch (IOException ex) {
                     Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
