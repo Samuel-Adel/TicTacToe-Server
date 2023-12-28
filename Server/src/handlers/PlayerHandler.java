@@ -26,6 +26,8 @@ import java.net.SocketException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import models.InviteResponseModel;
+import models.InviteSendModel;
 import models.JsonReceiveBase;
 import models.JsonSendBase;
 import models.LoginResponseModel;
@@ -47,8 +49,7 @@ public class PlayerHandler extends Thread {
     private String clientMsg;
     private JsonReceiveBase jsonRecieveBase;
 
-
-  private  JsonSendBase jsonSendBase;
+    private JsonSendBase jsonSendBase;
 
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
@@ -172,6 +173,26 @@ public class PlayerHandler extends Thread {
                 jsonSend = JsonWrapper.toJson(jsonSendBase);
                 mouth.println(jsonSend);
             }
+
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.Invite.name())) {
+
+            InviteSendModel inviteSendModel = new InviteSendModel();
+            InviteResponseModel inviteResponseModel;
+
+            jsonSendBase.setType(RequestTypes.Invite.name());
+            inviteResponseModel = JsonWrapper.fromJson(clientMsg, InviteResponseModel.class);
+            System.out.println(inviteResponseModel);
+            
+            String getReceiverUser = inviteResponseModel.getReceieverUserName();
+            String getSenderUser = inviteResponseModel.getSenderUserName();
+            
+            System.out.println(getSenderUser);
+            System.out.println(getReceiverUser);
+
+//            if ( (getReceiverUser == jsonSendBase.getStatus() == 1) && (getSenderUser == jsonSendBase.getStatus() == 1)) {
+//                
+//
+//            }
 
         }
 
