@@ -9,7 +9,9 @@ package models;
  * @author Sasa Adel
  */
 public class JsonSendBase {
-    int requestStatus; // 1 if there is a user , 2 if the database throw an un expected exception // 0 there is no user
+    int requestStatus;  // 1 if there is a user,
+                        //2 if the database throw an un expected exception,
+                        // 0 there is no user
     String requestType;
     String requestMessage;
 
