@@ -13,9 +13,11 @@ import helpers.RequestTypes;
  */
 public class InviteResponseModel extends JsonReceiveBase {
     
-    String senderUserName;
-    String receieverUserName;
-    
+    private String senderUserName;
+    private String receiverUserName;
+    private final RequestTypes requestType = RequestTypes.Invite;
+   
+
 
     public String getSenderUserName() {
         return senderUserName;
@@ -26,11 +28,11 @@ public class InviteResponseModel extends JsonReceiveBase {
     }
 
     public String getReceieverUserName() {
-        return receieverUserName;
+        return receiverUserName;
     }
 
     public void setReceieverUserName(String receieverUserName) {
-        this.receieverUserName = receieverUserName;
+        this.receiverUserName = receieverUserName;
     }
 
    
