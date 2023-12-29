@@ -14,15 +14,18 @@ package handlers;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+import Entity.Player;
 import helpers.LoginDB;
 import com.google.gson.Gson;
 import database.DataBaseManager;
+import helpers.ListDB;
 import helpers.RequestTypes;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -99,6 +102,26 @@ public class PlayerHandler extends Thread {
             ch.mouth.println(msg);
         });
     }
+    
+       //Method to broadcast the updated list of active players to all clients
+    private void broadcastActivePlayers(){
+        ListDB list = new ListDB();
+        ArrayList<Player> playerList = list.getActivePlayersFromDatabase();
+        //Remove this userNmae from the List
+         //    playerList.removeIf(player -> player.getUserName().equals(clientMsg)); 
+        // Convert the playerList to JSON using JsonWrapper
+        jsonSendBase.setStatus(1);
+        jsonSendBase.setMessge("Send Available Players Successfully");
+        jsonSendBase.setType(RequestTypes.AvailPlayers.name());
+        System.out.println(jsonSendBase.getType() + " " + jsonSendBase.getMessge() + " " + jsonSendBase.getStatus());
+        String jsonPlayers = JsonWrapper.toJson(playerList);
+
+        // Broadcast the updated list of players to all connected clients
+        sendMessageToAll(jsonPlayers);
+        System.out.println("Json Format For PlayerList: " + jsonPlayers);
+    
+    }
+    
 
     private void handleOperation(String clientMessage) {
         jsonRecieveBase = JsonWrapper.fromJson(clientMsg, JsonReceiveBase.class);
@@ -174,6 +197,7 @@ public class PlayerHandler extends Thread {
                 mouth.println(jsonSend);
             }
 
+
         } else if (jsonRecieveBase.getType().equals(RequestTypes.Invite.name())) {
 
             InviteSendModel inviteSendModel = new InviteSendModel();
@@ -193,6 +217,26 @@ public class PlayerHandler extends Thread {
 //                
 //
 //            }
+
+
+        }else if(jsonRecieveBase.getType().equals(RequestTypes.AvailPlayers.name())) {
+            ListDB list = new ListDB();
+            System.out.println("The Username of the Player That Login is received");   //for Test
+            ArrayList<Player> playerList  = list.getActivePlayersFromDatabase();  
+            //Remove this userNmae from the List
+         //    playerList.removeIf(player -> player.getUserName().equals(clientMsg));   
+             // Convert the playerList to JSON using JsonWrapper
+             jsonSendBase.setStatus(1);
+             jsonSendBase.setMessge("Send Available Players Successfull");
+             jsonSendBase.setType(RequestTypes.AvailPlayers.name());
+             System.out.println(jsonSendBase.getType() + " " + jsonSendBase.getMessge() + " " + jsonSendBase.getStatus());
+             String jsonPlayers = JsonWrapper.toJson(playerList);
+             mouth.println(jsonPlayers);
+             System.out.println("Json Format For PlayerList: " + jsonPlayers);
+             
+             broadcastActivePlayers();
+        }else if (jsonRecieveBase.getType().equals(RequestTypes.Invite.name())) {
+                System.out.println(clientMsg);
 
         }
 
