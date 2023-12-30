@@ -13,11 +13,9 @@ package handlers;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-<<<<<<< HEAD
 
-=======
+
 import Entity.Player;
->>>>>>> server_dev
 import helpers.LoginDB;
 import com.google.gson.Gson;
 import database.DataBaseManager;
@@ -33,12 +31,9 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-<<<<<<< HEAD
 
-=======
 import models.InviteResponseModel;
 import models.InviteSendModel;
->>>>>>> server_dev
 import models.JsonReceiveBase;
 import models.JsonSendBase;
 import models.LoginResponseModel;
@@ -59,14 +54,11 @@ public class PlayerHandler extends Thread {
     private Socket currentSocket;
     private String clientMsg;
     private JsonReceiveBase jsonRecieveBase;
-<<<<<<< HEAD
-    private JsonSendBase jsonSendBase;
-=======
     private String userName;
 
     private JsonSendBase jsonSendBase;
 
->>>>>>> server_dev
+
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
 

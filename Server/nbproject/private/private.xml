@@ -3,16 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/D:/iti/Java/Tic%20Tac%20Toe/TicTacToe-Server/Server/src/models/Movement.java</file>
+            <file>file:/D:/iti/Java/Tic%20Tac%20Toe/TicTacToe-Server/Server/src/database/DataBaseManager.java</file>
+            <file>file:/D:/iti/Java/Tic%20Tac%20Toe/TicTacToe-Server/Server/src/screen/server_screen/ServerBaseScreen.java</file>
             <file>file:/D:/iti/Java/Tic%20Tac%20Toe/TicTacToe-Server/Server/src/handlers/PlayerHandler.java</file>
-=======
-            <file>file:/F:/ITI/Native%20Mobile%20Data/Java/TicTacToe-Server/Server/src/screen/server_screen/ServerBaseScreen.java</file>
-            <file>file:/F:/ITI/Native%20Mobile%20Data/Java/TicTacToe-Server/Server/src/database/DataBaseManager.java</file>
-            <file>file:/F:/ITI/Native%20Mobile%20Data/Java/TicTacToe-Server/Server/src/handlers/PlayerHandler.java</file>
-            <file>file:/F:/ITI/Native%20Mobile%20Data/Java/TicTacToe-Server/Server/src/helpers/RequestTypes.java</file>
-            <file>file:/F:/ITI/Native%20Mobile%20Data/Java/TicTacToe-Server/Server/src/handlers/JsonWrapper.java</file>
->>>>>>> server_dev
         </group>
     </open-files>
 </project-private>
