@@ -6,7 +6,6 @@
 package handlers;
 
 /**
- *
  * @author Sasa Adel
  */
 /*
@@ -14,10 +13,12 @@ package handlers;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 import helpers.LoginDB;
 import com.google.gson.Gson;
 import database.DataBaseManager;
 import helpers.RequestTypes;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -26,6 +27,7 @@ import java.net.SocketException;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import models.JsonReceiveBase;
 import models.JsonSendBase;
 import models.LoginResponseModel;
@@ -34,7 +36,6 @@ import models.Registration;
 //import org.json.JSONObject;
 
 /**
- *
  * @author Sasa Adel
  */
 public class PlayerHandler extends Thread {
@@ -46,7 +47,7 @@ public class PlayerHandler extends Thread {
     private Socket currentSocket;
     private String clientMsg;
     private JsonReceiveBase jsonRecieveBase;
-  private  JsonSendBase jsonSendBase;
+    private JsonSendBase jsonSendBase;
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
 
@@ -169,8 +170,13 @@ public class PlayerHandler extends Thread {
                 jsonSend = JsonWrapper.toJson(jsonSendBase);
                 mouth.println(jsonSend);
             }
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.Move.toString())) {
+            jsonSendBase.setType(RequestTypes.Move.toString());
+
+
 
         }
+
 
     }
 
