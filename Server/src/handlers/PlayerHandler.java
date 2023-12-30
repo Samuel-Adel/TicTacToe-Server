@@ -141,11 +141,11 @@ public class PlayerHandler extends Thread {
                 logineSendModel.setPlayerData(loginDB.getPlayerData(), jsonSendBase);
                 jsonSend = JsonWrapper.toJson(logineSendModel);
                 System.out.println(jsonSend);
-                sendMessageToAll(jsonSend);
+                mouth.println(jsonSend);
             } else {
                 jsonSend = JsonWrapper.toJson(jsonSendBase);
                 System.out.println(jsonSend);
-                sendMessageToAll(jsonSend);
+                mouth.println(jsonSend);
             }
         } else if (jsonRecieveBase.getType().equals(RequestTypes.Register.name())) {
             String jsonSend;
