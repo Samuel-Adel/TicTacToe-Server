@@ -35,6 +35,7 @@ import models.JsonReceiveBase;
 import models.JsonSendBase;
 import models.LoginResponseModel;
 import models.LoginSendModel;
+import models.OnlineBoard;
 import models.Registration;
 //import org.json.JSONObject;
 
@@ -52,10 +53,6 @@ public class PlayerHandler extends Thread {
     private String clientMsg;
     private JsonReceiveBase jsonRecieveBase;
     private String userName;
-
-    public String getUserName() {
-        return userName;
-    }
 
     private JsonSendBase jsonSendBase;
 
@@ -202,20 +199,6 @@ public class PlayerHandler extends Thread {
                 mouth.println(jsonSend);
             }
 
-        } else if (jsonRecieveBase.getType().equals(RequestTypes.Invite.name())) {
-            
-            jsonSendBase.setType(RequestTypes.Invite.name());
-            
-            InviteResponseModel inviteResponseModel;
-            inviteResponseModel = JsonWrapper.fromJson(clientMsg, InviteResponseModel.class);
-
-            String senderUser = inviteResponseModel.getSenderUserName();
-            String receiverUser = inviteResponseModel.getReceieverUserName();
-
-            System.out.println(inviteResponseModel);
-            System.out.println(senderUser);
-            System.out.println(receiverUser);
-            sendInvitation(senderUser, receiverUser);
         } else if (jsonRecieveBase.getType().equals(RequestTypes.AvailPlayers.name())) {
             ListDB list = new ListDB();
             System.out.println("The Username of the Player That Login is received");   //for Test
@@ -233,29 +216,91 @@ public class PlayerHandler extends Thread {
 
             broadcastActivePlayers();
         } else if (jsonRecieveBase.getType().equals(RequestTypes.Invite.name())) {
-            System.out.println(clientMsg);
+
+            System.out.println("First Message from Aya" + clientMsg);
+            OnlineBoard onlineBoard = JsonWrapper.fromJson(clientMsg, OnlineBoard.class);
+
+            String jsonSend;
+
+            onlineBoard.setType(RequestTypes.Invite.name());
+            jsonSend = JsonWrapper.toJson(onlineBoard);
+            System.out.println(" First Message to Aya" + jsonSend);
+            sendMessageToAll(jsonSend);
+
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.InviteResponse.name())) {
+            System.out.println("Second Message From Aya" + clientMessage);
+            InviteResponseModel inviteResponseModel = JsonWrapper.fromJson(clientMsg, InviteResponseModel.class);
+            handleInviteResponse(inviteResponseModel);
 
         }
 
     }
 
-    public void sendInvitation(String senderUSerName, String receiverUserName) {
+    public void sendInvitationToReceiverOnly(String receiverUserName, String message) {
+        if (receiverUserName == null) {
+            System.out.println("Invited Person is null");
+            return;
+        }
+        for (PlayerHandler client : clientsVector) {
 
-        for (PlayerHandler playerhandler : clientsVector) {
-
-            if (playerhandler.getUserName() != null && playerhandler.getUserName().equals(receiverUserName)) {
-                InviteSendModel inviteSendModel = new InviteSendModel();
-                String jsonSend;
-                inviteSendModel.setSenderUserName(senderUSerName);
-                inviteSendModel.setRecieverUserName(receiverUserName);
-                inviteSendModel.setSendRequestType(RequestTypes.Invite);
-
-                jsonSend = JsonWrapper.toJson(inviteSendModel);
-                System.out.println(jsonSend);
-                playerhandler.mouth.println(jsonSend);
-                break;
+            if (client != null && client.getUserName() != null) {
+                if (client.getUserName().equals(receiverUserName)) {
+                    client.mouth.println(message);
+                    break;
+                }
 
             }
+        }
+
+    }
+
+    public String getUserName() {
+
+        if (clientMsg == null) {
+            System.out.println("Client Message is Null");
+            return null;
+        }
+
+        OnlineBoard onlineBoard = JsonWrapper.fromJson(clientMsg, OnlineBoard.class);
+        if (onlineBoard != null) {
+            return onlineBoard.getReceiverUserName();
+        } else {
+            System.out.println("OnlineBoard is null");
+            return null;
+        }
+
+    }
+
+    private void handleInviteResponse(InviteResponseModel inviteResponseModel) {
+
+        boolean isAccepted = inviteResponseModel.getStatus() == 1;
+        String invitedPlayer = inviteResponseModel.getReceiverUserName();
+
+        InviteResponseModel invite = new InviteResponseModel();
+
+        if (isAccepted) {
+            System.out.println(invitedPlayer + " Accepted Your Invitation");
+
+            invite.setType(RequestTypes.InviteResponse.name());
+            invite.setMessge("accepted");
+            invite.setStatus(1);
+            invite.setSenderUserName(inviteResponseModel.getSenderUserName());
+            invite.setReceiverUserName(inviteResponseModel.getReceiverUserName());
+
+            String jsonSend = JsonWrapper.toJson(invite);
+            sendMessageToAll(jsonSend);
+        } else {
+
+            System.out.println(invitedPlayer + "Rejected Your Invitation");
+
+            invite.setType(RequestTypes.InviteResponse.name());
+            invite.setMessge("rejected");
+            invite.setStatus(0);
+            invite.setSenderUserName(inviteResponseModel.getSenderUserName());
+            invite.setReceiverUserName(inviteResponseModel.getReceiverUserName());
+
+            String jsonSend = JsonWrapper.toJson(invite);
+            sendMessageToAll(jsonSend);
         }
 
     }
