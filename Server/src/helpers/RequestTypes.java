@@ -12,6 +12,6 @@ package helpers;
 public enum RequestTypes {
 
 
-    Login, Register, Join, Move,AvailPlayers,Invite
+    Login, Register, Join, Move,AvailPlayers,Invite,InviteResponse
 
 }
