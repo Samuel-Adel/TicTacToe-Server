@@ -5,11 +5,13 @@
  */
 package Entity;
 
+import models.JsonSendBase;
+
 /**
  *
  * @author Sasa Adel
  */
-public class Player {
+public class Player extends JsonSendBase{
     private int id;
     private String userName;
     private int status;
