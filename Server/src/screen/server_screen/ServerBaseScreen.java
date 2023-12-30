@@ -22,9 +22,17 @@ public class ServerBaseScreen extends AnchorPane {
     protected final Button startStopButton;
     protected final Label label0;
     protected final Label label1;
+<<<<<<< HEAD
     protected final Label lableNumOfOnlinePlayers;
     protected final Label lableNumOfPlayers;
     private final ServerBase server;
+=======
+
+    protected final Label lableNumOfOnlinePlayers;
+    protected final Label lableNumOfPlayers;
+    private final ServerBase server;
+
+>>>>>>> server_dev
 
     public ServerBaseScreen(Stage stage) {
 
@@ -32,9 +40,17 @@ public class ServerBaseScreen extends AnchorPane {
         startStopButton = new Button();
         label0 = new Label();
         label1 = new Label();
+<<<<<<< HEAD
         lableNumOfOnlinePlayers = new Label();
         lableNumOfPlayers = new Label();
         server = new ServerBase();
+=======
+
+        lableNumOfOnlinePlayers = new Label();
+        lableNumOfPlayers = new Label();
+        server = new ServerBase();
+
+>>>>>>> server_dev
 
         setMaxHeight(USE_PREF_SIZE);
         setMaxWidth(USE_PREF_SIZE);
@@ -58,6 +74,26 @@ public class ServerBaseScreen extends AnchorPane {
         startStopButton.setText("Start");
         startStopButton.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         startStopButton.setFont(new Font("Comic Sans MS Bold", 20.0));
+<<<<<<< HEAD
+=======
+
+        startStopButton.setStyle(
+                "-fx-background-color: white; "
+                + "-fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0); "
+                + "-fx-border-color: black; "
+                + "-fx-border-width: 3px;"
+                + "-fx-background-radius: 10; "
+                + "-fx-border-radius: 10;"
+        );
+        stage.setOnCloseRequest((event) -> {
+            try {
+                server.closeServer();
+            } catch (IOException ex) {
+                Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+>>>>>>> server_dev
+
 
         label0.setLayoutX(50.0);
         label0.setLayoutY(99.0);
@@ -76,6 +112,10 @@ public class ServerBaseScreen extends AnchorPane {
         lableNumOfOnlinePlayers.setText("0");
         lableNumOfOnlinePlayers.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         lableNumOfOnlinePlayers.setFont(new Font("Comic Sans MS Bold", 25.0));
+<<<<<<< HEAD
+=======
+
+>>>>>>> server_dev
 
         lableNumOfPlayers.setLayoutX(96.0);
         lableNumOfPlayers.setLayoutY(180.0);
@@ -89,7 +129,16 @@ public class ServerBaseScreen extends AnchorPane {
         getChildren().add(label1);
         getChildren().add(lableNumOfOnlinePlayers);
         getChildren().add(lableNumOfPlayers);
+<<<<<<< HEAD
 
+=======
+        
+        serverButton();
+        getNumOfOnlinePlayers();
+        getNumOfPlayers();
+
+        
+>>>>>>> server_dev
         serverButton();
 
     }
@@ -99,8 +148,11 @@ public class ServerBaseScreen extends AnchorPane {
             if (startStopButton.getText().equals("Start")) {
                 try {
                     server.startServer();
+<<<<<<< HEAD
                     getNumOfOnlinePlayers();
                     getNumOfPlayers();
+=======
+>>>>>>> server_dev
                 } catch (IOException ex) {
                     Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -109,7 +161,10 @@ public class ServerBaseScreen extends AnchorPane {
             } else {
                 try {
                     server.closeServer();
+<<<<<<< HEAD
 
+=======
+>>>>>>> server_dev
                 } catch (IOException ex) {
                     Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -131,6 +186,22 @@ public class ServerBaseScreen extends AnchorPane {
                     ResultSet resultSet = preparedStatementAllPlayers.executeQuery();
                     if (resultSet.next()) {
 
+<<<<<<< HEAD
+=======
+
+                        int numOfPlayers = resultSet.getInt("num_rows");
+
+                        Platform.runLater(() -> {
+                            lableNumOfPlayers.setText(String.valueOf(numOfPlayers));
+
+                        });
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
+
+>>>>>>> server_dev
                         int numOfPlayers = resultSet.getInt("num_rows");
 
                         Platform.runLater(() -> {
@@ -170,7 +241,15 @@ public class ServerBaseScreen extends AnchorPane {
                             lableNumOfOnlinePlayers.setText(String.valueOf(numOfOnlinePlayers));
 
                         });
+<<<<<<< HEAD
 
+=======
+
+
+                        int numOfPlayers = resultSet.getInt("num_rows");
+
+                        lableNumOfOnlinePlayers.setText(String.valueOf(numOfPlayers));
+>>>>>>> server_dev
                     }
 
                     resultSet.close();

@@ -15,6 +15,19 @@ public class Player {
     private int status;
     private int score;
 
+    public Player () {
+        
+    }
+    
+
+    public Player(String userName, int score) {
+     //   throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.userName=userName;
+        this.score= score;
+    }
+    
+   
+
     public int getId() {
         return id;
     }

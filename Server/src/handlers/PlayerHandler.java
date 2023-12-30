@@ -13,10 +13,15 @@ package handlers;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+<<<<<<< HEAD
 
+=======
+import Entity.Player;
+>>>>>>> server_dev
 import helpers.LoginDB;
 import com.google.gson.Gson;
 import database.DataBaseManager;
+import helpers.ListDB;
 import helpers.RequestTypes;
 
 import java.io.DataInputStream;
@@ -24,14 +29,21 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+<<<<<<< HEAD
 
+=======
+import models.InviteResponseModel;
+import models.InviteSendModel;
+>>>>>>> server_dev
 import models.JsonReceiveBase;
 import models.JsonSendBase;
 import models.LoginResponseModel;
 import models.LoginSendModel;
+import models.OnlineBoard;
 import models.Registration;
 //import org.json.JSONObject;
 
@@ -47,7 +59,14 @@ public class PlayerHandler extends Thread {
     private Socket currentSocket;
     private String clientMsg;
     private JsonReceiveBase jsonRecieveBase;
+<<<<<<< HEAD
     private JsonSendBase jsonSendBase;
+=======
+    private String userName;
+
+    private JsonSendBase jsonSendBase;
+
+>>>>>>> server_dev
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
 
@@ -97,11 +116,29 @@ public class PlayerHandler extends Thread {
         });
     }
 
+    //Method to broadcast the updated list of active players to all clients
+    private void broadcastActivePlayers() {
+        ListDB list = new ListDB();
+        ArrayList<Player> playerList = list.getActivePlayersFromDatabase();
+        //Remove this userNmae from the List
+        //    playerList.removeIf(player -> player.getUserName().equals(clientMsg)); 
+        // Convert the playerList to JSON using JsonWrapper
+        jsonSendBase.setStatus(1);
+        jsonSendBase.setMessge("Send Available Players Successfully");
+        jsonSendBase.setType(RequestTypes.AvailPlayers.name());
+        System.out.println(jsonSendBase.getType() + " " + jsonSendBase.getMessge() + " " + jsonSendBase.getStatus());
+        String jsonPlayers = JsonWrapper.toJson(playerList);
+
+        // Broadcast the updated list of players to all connected clients
+        sendMessageToAll(jsonPlayers);
+        System.out.println("Json Format For PlayerList: " + jsonPlayers);
+
+    }
+
     private void handleOperation(String clientMessage) {
         jsonRecieveBase = JsonWrapper.fromJson(clientMsg, JsonReceiveBase.class);
 
-        System.out.println("ss" + jsonRecieveBase.getType());
-
+        // System.out.println("ss" + jsonRecieveBase.getType());
 //        String[] parts = clientMsg.split(" ", 2); // hna bfok el msg L 2 parts "mode" + json
 //        String mode = parts[0];
 //        String jsonData = parts.length > 1 ? parts[1] : "";
@@ -139,6 +176,8 @@ public class PlayerHandler extends Thread {
             jsonSendBase.setStatus(loginDB.checkLoginOperation());
 
             if (jsonSendBase.getStatus() == 1) {
+                this.userName = loginResponseModel.getUserName();
+                System.out.println("the vector userName" + userName);
                 logineSendModel.setPlayerData(loginDB.getPlayerData(), jsonSendBase);
                 jsonSend = JsonWrapper.toJson(logineSendModel);
                 System.out.println(jsonSend);
@@ -175,6 +214,108 @@ public class PlayerHandler extends Thread {
 
 
 
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.AvailPlayers.name())) {
+            ListDB list = new ListDB();
+            System.out.println("The Username of the Player That Login is received");   //for Test
+            ArrayList<Player> playerList = list.getActivePlayersFromDatabase();
+            //Remove this userNmae from the List
+            //    playerList.removeIf(player -> player.getUserName().equals(clientMsg));   
+            // Convert the playerList to JSON using JsonWrapper
+            jsonSendBase.setStatus(1);
+            jsonSendBase.setMessge("Send Available Players Successfull");
+            jsonSendBase.setType(RequestTypes.AvailPlayers.name());
+            System.out.println(jsonSendBase.getType() + " " + jsonSendBase.getMessge() + " " + jsonSendBase.getStatus());
+            String jsonPlayers = JsonWrapper.toJson(playerList);
+            mouth.println(jsonPlayers);
+            System.out.println("Json Format For PlayerList: " + jsonPlayers);
+
+            broadcastActivePlayers();
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.Invite.name())) {
+
+            System.out.println("First Message from Aya" + clientMsg);
+            OnlineBoard onlineBoard = JsonWrapper.fromJson(clientMsg, OnlineBoard.class);
+
+            String jsonSend;
+
+            onlineBoard.setType(RequestTypes.Invite.name());
+            jsonSend = JsonWrapper.toJson(onlineBoard);
+            System.out.println(" First Message to Aya" + jsonSend);
+            sendMessageToAll(jsonSend);
+
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.InviteResponse.name())) {
+            System.out.println("Second Message From Aya" + clientMessage);
+            InviteResponseModel inviteResponseModel = JsonWrapper.fromJson(clientMsg, InviteResponseModel.class);
+            handleInviteResponse(inviteResponseModel);
+
+        }
+
+    }
+
+    public void sendInvitationToReceiverOnly(String receiverUserName, String message) {
+        if (receiverUserName == null) {
+            System.out.println("Invited Person is null");
+            return;
+        }
+        for (PlayerHandler client : clientsVector) {
+
+            if (client != null && client.getUserName() != null) {
+                if (client.getUserName().equals(receiverUserName)) {
+                    client.mouth.println(message);
+                    break;
+                }
+
+            }
+        }
+
+    }
+
+    public String getUserName() {
+
+        if (clientMsg == null) {
+            System.out.println("Client Message is Null");
+            return null;
+        }
+
+        OnlineBoard onlineBoard = JsonWrapper.fromJson(clientMsg, OnlineBoard.class);
+        if (onlineBoard != null) {
+            return onlineBoard.getReceiverUserName();
+        } else {
+            System.out.println("OnlineBoard is null");
+            return null;
+        }
+
+    }
+
+    private void handleInviteResponse(InviteResponseModel inviteResponseModel) {
+
+        boolean isAccepted = inviteResponseModel.getStatus() == 1;
+        String invitedPlayer = inviteResponseModel.getReceiverUserName();
+
+        InviteResponseModel invite = new InviteResponseModel();
+
+        if (isAccepted) {
+            System.out.println(invitedPlayer + " Accepted Your Invitation");
+
+            invite.setType(RequestTypes.InviteResponse.name());
+            invite.setMessge("accepted");
+            invite.setStatus(1);
+            invite.setSenderUserName(inviteResponseModel.getSenderUserName());
+            invite.setReceiverUserName(inviteResponseModel.getReceiverUserName());
+
+            String jsonSend = JsonWrapper.toJson(invite);
+            sendMessageToAll(jsonSend);
+        } else {
+
+            System.out.println(invitedPlayer + "Rejected Your Invitation");
+
+            invite.setType(RequestTypes.InviteResponse.name());
+            invite.setMessge("rejected");
+            invite.setStatus(0);
+            invite.setSenderUserName(inviteResponseModel.getSenderUserName());
+            invite.setReceiverUserName(inviteResponseModel.getReceiverUserName());
+
+            String jsonSend = JsonWrapper.toJson(invite);
+            sendMessageToAll(jsonSend);
         }
 
 
