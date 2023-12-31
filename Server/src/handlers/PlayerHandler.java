@@ -13,8 +13,6 @@ package handlers;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import Entity.Player;
 import helpers.LoginDB;
 import com.google.gson.Gson;
@@ -39,7 +37,9 @@ import models.JsonSendBase;
 import models.LoginResponseModel;
 import models.LoginSendModel;
 import models.OnlineBoard;
+import models.OnlineGameModel;
 import models.Registration;
+import server.Server;
 //import org.json.JSONObject;
 
 /**
@@ -57,7 +57,6 @@ public class PlayerHandler extends Thread {
     private String userName;
 
     private JsonSendBase jsonSendBase;
-
 
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
@@ -201,10 +200,29 @@ public class PlayerHandler extends Thread {
                 jsonSend = JsonWrapper.toJson(jsonSendBase);
                 mouth.println(jsonSend);
             }
-        } else if (jsonRecieveBase.getType().equals(RequestTypes.Move.toString())) {
-            jsonSendBase.setType(RequestTypes.Move.toString());
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.Move.name())) {
 
+            OnlineGameModel onlineGameModel = JsonWrapper.fromJson(clientMsg, OnlineGameModel.class);
+            
+            new Thread(() -> {
+                String jsonData;
+                while (true) {
 
+                    if (onlineGameModel.getCurrentPlayerMark() == 'X') {
+                        onlineGameModel.setCurrentPlayerUserName(changeTurn(onlineGameModel));
+                        onlineGameModel.setCurrentPlayerMark('O');
+                        jsonData = JsonWrapper.toJson(onlineGameModel);
+                        mouth.println(jsonData);
+                    } else {
+                        onlineGameModel.setCurrentPlayerUserName(changeTurn(onlineGameModel));
+                        onlineGameModel.setCurrentPlayerMark('O');
+                        jsonData = JsonWrapper.toJson(onlineGameModel);
+                        mouth.println(jsonData);
+
+                    }
+
+                }
+            }).start();
 
         } else if (jsonRecieveBase.getType().equals(RequestTypes.AvailPlayers.name())) {
             ListDB list = new ListDB();
@@ -241,6 +259,15 @@ public class PlayerHandler extends Thread {
 
         }
 
+    }
+
+    private String changeTurn(OnlineGameModel onlineGameModel) {
+
+        if (onlineGameModel.getCurrentPlayerUserName() == onlineGameModel.getPlayer1UserName()) {
+            return onlineGameModel.getPlayer2UserName();
+        } else {
+            return onlineGameModel.getPlayer2UserName();
+        }
     }
 
     public void sendInvitationToReceiverOnly(String receiverUserName, String message) {
@@ -309,7 +336,6 @@ public class PlayerHandler extends Thread {
             String jsonSend = JsonWrapper.toJson(invite);
             sendMessageToAll(jsonSend);
         }
-
 
     }
 
