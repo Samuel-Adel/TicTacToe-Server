@@ -25,6 +25,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.SocketException;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -172,7 +175,18 @@ public class PlayerHandler extends Thread {
                 logineSendModel.setPlayerData(loginDB.getPlayerData(), jsonSendBase);
                 jsonSend = JsonWrapper.toJson(logineSendModel);
                 System.out.println(jsonSend);
+                DataBaseManager connection = new DataBaseManager();
+
+                try {
+                    PreparedStatement preparedStatementUpdatePlayerStatus = connection.con.prepareStatement("UPDATE player SET status = 1 WHERE user_name = ?");
+                    preparedStatementUpdatePlayerStatus.setString(1, userName);
+                    preparedStatementUpdatePlayerStatus.executeUpdate();
+                } catch (SQLException ex) {
+                    Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
                 sendMessageToAll(jsonSend);
+
             } else {
                 jsonSend = JsonWrapper.toJson(jsonSendBase);
                 System.out.println(jsonSend);
@@ -203,7 +217,7 @@ public class PlayerHandler extends Thread {
         } else if (jsonRecieveBase.getType().equals(RequestTypes.Move.name())) {
 
             OnlineGameModel onlineGameModel = JsonWrapper.fromJson(clientMsg, OnlineGameModel.class);
-            
+
             new Thread(() -> {
                 String jsonData;
                 while (true) {

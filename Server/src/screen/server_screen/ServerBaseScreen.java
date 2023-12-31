@@ -201,9 +201,7 @@ public class ServerBaseScreen extends AnchorPane {
 
                         });
 
-                        int numOfPlayers = resultSet.getInt("num_rows");
 
-                        lableNumOfOnlinePlayers.setText(String.valueOf(numOfPlayers));
 
                     }
 
