@@ -12,12 +12,18 @@ backed up to jfx-impl_backup_3.xml and then updated to the currently supported s
 backed up to jfx-impl_backup_3.xml and then updated to the currently supported state.
 =======
 <<<<<<< HEAD
+backed up to jfx-impl_backup_4.xml and then updated to the currently supported state.
+>>>>>>> 6225473ad2ab24af8eb5fcb863f9438b885df723
+>>>>>>> 1a6849581f4579eff4d36f4250de6ca89dcba173
+=======
+<<<<<<< HEAD
 backed up to jfx-impl_backup_3.xml and then updated to the currently supported state.
 =======
 backed up to jfx-impl_backup_4.xml and then updated to the currently supported state.
 >>>>>>> 6225473ad2ab24af8eb5fcb863f9438b885df723
 >>>>>>> 1a6849581f4579eff4d36f4250de6ca89dcba173
 >>>>>>> d4a46fb387cc833225172df1a79079aae312a77c
+>>>>>>> 86fca323093f33e67ea5604b3f53ed493f568f3a
 
 FX Project build script auto-update may be triggered on project open either after
 NetBeans installation update or by manual changes in jfx-impl.xml. Please note that
