@@ -300,7 +300,8 @@ public class ServerBaseScreen extends AnchorPane {
             
             InetAddress localhost = InetAddress.getLocalHost();
 
-
+                       
+            lableIPIdress.setText("IP Address: " + localhost.getHostAddress());
             lableIPIdress.setVisible(true);
             System.out.println("IP Address: " + localhost.getHostAddress());
         } catch (UnknownHostException e) {
