@@ -7,14 +7,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import javafx.application.Platform;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Font;
+import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.stage.Stage;
-import javax.swing.SwingUtilities;
 
 public class ServerBaseScreen extends AnchorPane {
 
@@ -22,10 +24,12 @@ public class ServerBaseScreen extends AnchorPane {
     protected final Button startStopButton;
     protected final Label label0;
     protected final Label label1;
-
     protected final Label lableNumOfOnlinePlayers;
     protected final Label lableNumOfPlayers;
+    protected final PieChart playersChart;
+    private final ObservableList<PieChart.Data> pieChartData;
     private final ServerBase server;
+    
 
     public ServerBaseScreen(Stage stage) {
 
@@ -33,16 +37,16 @@ public class ServerBaseScreen extends AnchorPane {
         startStopButton = new Button();
         label0 = new Label();
         label1 = new Label();
-
         lableNumOfOnlinePlayers = new Label();
         lableNumOfPlayers = new Label();
+        playersChart = new PieChart();
         server = new ServerBase();
 
         setMaxHeight(USE_PREF_SIZE);
         setMaxWidth(USE_PREF_SIZE);
         setMinHeight(USE_PREF_SIZE);
         setMinWidth(USE_PREF_SIZE);
-        setPrefHeight(416.0);
+        setPrefHeight(560.0);
         setPrefWidth(764.0);
         setStyle("-fx-background-color: #3C7CD7;");
 
@@ -60,22 +64,6 @@ public class ServerBaseScreen extends AnchorPane {
         startStopButton.setText("Start");
         startStopButton.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         startStopButton.setFont(new Font("Comic Sans MS Bold", 20.0));
-
-        startStopButton.setStyle(
-                "-fx-background-color: white; "
-                + "-fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0); "
-                + "-fx-border-color: black; "
-                + "-fx-border-width: 3px;"
-                + "-fx-background-radius: 10; "
-                + "-fx-border-radius: 10;"
-        );
-        stage.setOnCloseRequest((event) -> {
-            try {
-                server.closeServer();
-            } catch (IOException ex) {
-                Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
 
         label0.setLayoutX(50.0);
         label0.setLayoutY(99.0);
@@ -101,12 +89,25 @@ public class ServerBaseScreen extends AnchorPane {
         lableNumOfPlayers.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         lableNumOfPlayers.setFont(new Font("Comic Sans MS Bold", 25.0));
 
+        playersChart.setLayoutX(212.0);
+        playersChart.setLayoutY(343.0);
+        playersChart.setPrefHeight(200.0);
+        playersChart.setPrefWidth(400.0);
+        pieChartData = FXCollections.observableArrayList();
+        PieChart.Data playersData = new PieChart.Data("Players", 0);
+        PieChart.Data onlinePlayersData = new PieChart.Data("Online Players", 0);
+        
+        
+        pieChartData.addAll(playersData, onlinePlayersData);
+        playersChart.setData(pieChartData);
+
         getChildren().add(label);
         getChildren().add(startStopButton);
         getChildren().add(label0);
         getChildren().add(label1);
         getChildren().add(lableNumOfOnlinePlayers);
         getChildren().add(lableNumOfPlayers);
+        getChildren().add(playersChart);
         
         setLablesInvisible();
         serverButton();
@@ -125,7 +126,7 @@ public class ServerBaseScreen extends AnchorPane {
                 }
                 startStopButton.setText("Stop");
                 setLablesVisible();
-               
+
             } else {
                 try {
                     server.closeServer();
@@ -133,7 +134,7 @@ public class ServerBaseScreen extends AnchorPane {
                     Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 startStopButton.setText("Start");
-                 setLablesInvisible();
+                setLablesInvisible();
             }
         });
     }
@@ -153,7 +154,7 @@ public class ServerBaseScreen extends AnchorPane {
 
                         Platform.runLater(() -> {
                             lableNumOfPlayers.setText(String.valueOf(numOfPlayers));
-
+                            updateChart();
                         });
                     }
                     try {
@@ -198,10 +199,8 @@ public class ServerBaseScreen extends AnchorPane {
 
                         Platform.runLater(() -> {
                             lableNumOfOnlinePlayers.setText(String.valueOf(numOfOnlinePlayers));
-
+                            updateChart();
                         });
-
-
 
                     }
 
@@ -220,11 +219,20 @@ public class ServerBaseScreen extends AnchorPane {
 
         lableNumOfOnlinePlayers.setVisible(true);
         lableNumOfPlayers.setVisible(true);
+        playersChart.setVisible(true);
     }
 
     private void setLablesInvisible() {
 
         lableNumOfOnlinePlayers.setVisible(false);
         lableNumOfPlayers.setVisible(false);
+        playersChart.setVisible(false);
+    }
+    private void updateChart() {
+        PieChart.Data playersData = pieChartData.get(0);
+        PieChart.Data onlinePlayersData = pieChartData.get(1);
+
+        playersData.setPieValue(Integer.parseInt(lableNumOfPlayers.getText()));
+        onlinePlayersData.setPieValue(Integer.parseInt(lableNumOfOnlinePlayers.getText()));
     }
 }
