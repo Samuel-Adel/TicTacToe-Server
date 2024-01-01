@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import models.ExitModel;
 
 import models.InviteResponseModel;
 import models.InviteSendModel;
@@ -275,6 +276,25 @@ public class PlayerHandler extends Thread {
             String jsonToSend;
             jsonToSend = JsonWrapper.toJson(userTerminatingSendModel);
             sendMessageToAll(jsonToSend);
+
+        }
+        
+        
+        else if (jsonRecieveBase.getType().equals(RequestTypes.Exit.name())) {
+            
+            ExitModel exitModel = JsonWrapper.fromJson(clientMessage, ExitModel.class);
+            System.out.println("exited Username: " + exitModel);
+            String loggedoutUserName = exitModel.getUserName();
+
+            DataBaseManager connection = new DataBaseManager();
+
+            try {
+                PreparedStatement updatePlayerStatus = connection.con.prepareStatement("UPDATE player SET status = 0 WHERE user_name = ?");
+                updatePlayerStatus.setString(1, loggedoutUserName);
+                updatePlayerStatus.executeUpdate();
+            } catch (SQLException ex) {
+                Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         }
     }
