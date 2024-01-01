@@ -39,6 +39,7 @@ import models.JsonReceiveBase;
 import models.JsonSendBase;
 import models.LoginResponseModel;
 import models.LoginSendModel;
+import models.LogoutModel;
 import models.OnlineBoard;
 import models.OnlineGameModel;
 import models.Registration;
@@ -271,6 +272,22 @@ public class PlayerHandler extends Thread {
             InviteResponseModel inviteResponseModel = JsonWrapper.fromJson(clientMsg, InviteResponseModel.class);
             handleInviteResponse(inviteResponseModel);
 
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.Logout.name())) {
+            jsonSendBase.setType(RequestTypes.Logout.name());
+            LogoutModel logoutModel = JsonWrapper.fromJson(clientMessage, LogoutModel.class);
+            System.out.println("Loggedout Username: " + logoutModel);
+            String loggedoutUserName = logoutModel.getUserName();
+            
+            DataBaseManager connection = new DataBaseManager();
+            
+            try {
+                PreparedStatement updatePlayerStatus = connection.con.prepareStatement("UPDATE player SET status = 0 WHERE user_name = ?");
+                updatePlayerStatus.setString(1, loggedoutUserName);
+                updatePlayerStatus.executeUpdate();
+            } catch (SQLException ex) {
+                Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
         }
 
     }
