@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="lib2">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Server/dist/run779812072/lib/derby.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Server/dist/run779812072/lib/derbyclient.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Server/dist/run779812072/lib/derbynet.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Server/dist/run779812072/lib/gson-2.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
