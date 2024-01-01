@@ -40,20 +40,20 @@ import models.JsonReceiveBase;
 import models.JsonSendBase;
 import models.LoginResponseModel;
 import models.LoginSendModel;
+import models.LogoutModel;
 import models.OnlineBoard;
 import models.OnlineGameModel;
 import models.Registration;
 import models.UserTerminatingResponse;
 import models.UserTerminatingSendModel;
 import models.WinnerModelResponse;
-import server.Server;
 //import org.json.JSONObject;
 
 /**
  * @author Sasa Adel
  */
 public class PlayerHandler extends Thread {
-    
+
     static private DataBaseManager dbManager;
     static int numberOfClients = 0;
     private DataInputStream ear;
@@ -62,12 +62,12 @@ public class PlayerHandler extends Thread {
     private String clientMsg;
     private JsonReceiveBase jsonRecieveBase;
     private String userName;
-    
+
     private JsonSendBase jsonSendBase;
-    
+
     static Vector<PlayerHandler> clientsVector // what is the difference
             = new Vector<PlayerHandler>();
-    
+
     public PlayerHandler(Socket currentSocketParameter) {
         dbManager = new DataBaseManager();
         numberOfClients++;
@@ -81,17 +81,17 @@ public class PlayerHandler extends Thread {
         } catch (IOException ex) {
             Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
-    
+
     @Override
     public void run() {
         try {
-            
+
             while (ear != null && currentSocket.isClosed() == false && (clientMsg = ear.readLine()) != null) {
                 handleOperation(clientMsg);
                 System.err.println("Client Message " + clientMsg);
-                
+
             }
         } catch (SocketException ex) {
             System.out.println(ex.getMessage() + "\n");
@@ -102,13 +102,13 @@ public class PlayerHandler extends Thread {
             } catch (IOException ex1) {
                 Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex1);
             }
-            
+
         } catch (IOException ex) {
             System.out.println("Can't IO");
         }
-        
+
     }
-    
+
     void sendMessageToAll(String msg) {
         clientsVector.forEach((ch) -> {
             ch.mouth.println(msg);
@@ -131,9 +131,9 @@ public class PlayerHandler extends Thread {
         // Broadcast the updated list of players to all connected clients
         sendMessageToAll(jsonPlayers);
         System.out.println("Json Format For PlayerList: " + jsonPlayers);
-        
+
     }
-    
+
     private void handleOperation(String clientMessage) {
         jsonRecieveBase = JsonWrapper.fromJson(clientMsg, JsonReceiveBase.class);
         if (jsonRecieveBase.getType().equals(RequestTypes.Login.name())) {
@@ -142,14 +142,14 @@ public class PlayerHandler extends Thread {
             String jsonSend;
             LoginDB loginDB;
             LoginResponseModel loginResponseModel;
-            
+
             loginResponseModel = JsonWrapper.fromJson(clientMsg, LoginResponseModel.class);
             System.out.println(loginResponseModel);
             System.out.println(loginResponseModel.getUserName());
             loginDB = new LoginDB(loginResponseModel, dbManager);
             jsonSendBase.setMessge(loginDB.userLogin());
             jsonSendBase.setStatus(loginDB.checkLoginOperation());
-            
+
             if (jsonSendBase.getStatus() == 1) {
                 this.userName = loginResponseModel.getUserName();
                 System.out.println("the vector userName" + userName);
@@ -179,15 +179,15 @@ public class PlayerHandler extends Thread {
             Registration registrationData = JsonWrapper.fromJson(clientMsg, Registration.class);
             Registration player = new Registration();
             player = registrationData.registerPlayer(registrationData.getUsername(), registrationData.getPassword());
-            
+
             if (player.getUsername() != null) {
-                
+
                 jsonSendBase.setStatus(1);
                 jsonSendBase.setMessge("Registration Successfull");
                 System.out.println(jsonSendBase.getType() + " " + jsonSendBase.getMessge() + " " + jsonSendBase.getStatus());
                 jsonSend = JsonWrapper.toJson(jsonSendBase);
                 mouth.println(jsonSend);
-                
+
             } else {
                 jsonSendBase.setStatus(0);
                 jsonSendBase.setMessge("Registration Faild, The Username Exist before");
@@ -234,11 +234,27 @@ public class PlayerHandler extends Thread {
             jsonSend = JsonWrapper.toJson(onlineBoard);
             System.out.println(" First Message to Aya" + jsonSend);
             sendMessageToAll(jsonSend);
-            
+
         } else if (jsonRecieveBase.getType().equals(RequestTypes.InviteResponse.name())) {
             System.out.println("Second Message From Aya" + clientMessage);
             InviteResponseModel inviteResponseModel = JsonWrapper.fromJson(clientMsg, InviteResponseModel.class);
             handleInviteResponse(inviteResponseModel);
+        } else if (jsonRecieveBase.getType().equals(RequestTypes.Logout.name())) {
+            jsonSendBase.setType(RequestTypes.Logout.name());
+            LogoutModel logoutModel = JsonWrapper.fromJson(clientMessage, LogoutModel.class);
+            System.out.println("Loggedout Username: " + logoutModel);
+            String loggedoutUserName = logoutModel.getUserName();
+
+            DataBaseManager connection = new DataBaseManager();
+
+            try {
+                PreparedStatement updatePlayerStatus = connection.con.prepareStatement("UPDATE player SET status = 0 WHERE user_name = ?");
+                updatePlayerStatus.setString(1, loggedoutUserName);
+                updatePlayerStatus.executeUpdate();
+            } catch (SQLException ex) {
+                Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
         } else if (jsonRecieveBase.getType().equals(RequestTypes.UpdateScore.name())) {
             WinnerModelResponse winnerModelResponse;
             winnerModelResponse = JsonWrapper.fromJson(clientMessage, WinnerModelResponse.class);
@@ -248,7 +264,7 @@ public class PlayerHandler extends Thread {
             } catch (SQLException ex) {
                 Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
         } else if (jsonRecieveBase.getType().equals(RequestTypes.Exiting.name())) {
             UserTerminatingResponse userTerminatingResponse;
             userTerminatingResponse = JsonWrapper.fromJson(clientMessage, UserTerminatingResponse.class);
@@ -259,43 +275,44 @@ public class PlayerHandler extends Thread {
             String jsonToSend;
             jsonToSend = JsonWrapper.toJson(userTerminatingSendModel);
             sendMessageToAll(jsonToSend);
+
         }
     }
-    
+
     private String changeTurn(OnlineGameModel onlineGameModel) {
-        
+
         if (onlineGameModel.getCurrentPlayerUserName().equals(onlineGameModel.getPlayer1UserName())) {
             return onlineGameModel.getPlayer2UserName();
         } else {
             return onlineGameModel.getPlayer1UserName();
         }
     }
-    
+
     public void sendInvitationToReceiverOnly(String receiverUserName, String message) {
         if (receiverUserName == null) {
             System.out.println("Invited Person is null");
             return;
         }
         for (PlayerHandler client : clientsVector) {
-            
+
             if (client != null && client.getUserName() != null) {
                 if (client.getUserName().equals(receiverUserName)) {
                     client.mouth.println(message);
                     break;
                 }
-                
+
             }
         }
-        
+
     }
-    
+
     public String getUserName() {
-        
+
         if (clientMsg == null) {
             System.out.println("Client Message is Null");
             return null;
         }
-        
+
         OnlineBoard onlineBoard = JsonWrapper.fromJson(clientMsg, OnlineBoard.class);
         if (onlineBoard != null) {
             return onlineBoard.getReceiverUserName();
@@ -303,25 +320,25 @@ public class PlayerHandler extends Thread {
             System.out.println("OnlineBoard is null");
             return null;
         }
-        
+
     }
-    
+
     private void handleInviteResponse(InviteResponseModel inviteResponseModel) {
-        
+
         boolean isAccepted = inviteResponseModel.getStatus() == 1;
         String invitedPlayer = inviteResponseModel.getReceiverUserName();
-        
+
         InviteResponseModel invite = new InviteResponseModel();
-        
+
         if (isAccepted) {
             System.out.println(invitedPlayer + " Accepted Your Invitation");
-            
+
             invite.setType(RequestTypes.InviteResponse.name());
             invite.setMessge("accepted");
             invite.setStatus(1);
             invite.setSenderUserName(inviteResponseModel.getSenderUserName());
             invite.setReceiverUserName(inviteResponseModel.getReceiverUserName());
-            
+
             String jsonSend = JsonWrapper.toJson(invite);
             sendMessageToAll(jsonSend);
         } else {
@@ -331,11 +348,11 @@ public class PlayerHandler extends Thread {
             invite.setStatus(0);
             invite.setSenderUserName(inviteResponseModel.getSenderUserName());
             invite.setReceiverUserName(inviteResponseModel.getReceiverUserName());
-            
+
             String jsonSend = JsonWrapper.toJson(invite);
             sendMessageToAll(jsonSend);
         }
-        
+
     }
-    
+
 }
