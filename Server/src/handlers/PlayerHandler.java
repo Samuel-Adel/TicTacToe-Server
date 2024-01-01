@@ -39,6 +39,7 @@ import models.JsonReceiveBase;
 import models.JsonSendBase;
 import models.LoginResponseModel;
 import models.LoginSendModel;
+import models.LogoutModel;
 import models.OnlineBoard;
 import models.OnlineGameModel;
 import models.Registration;
@@ -271,6 +272,10 @@ public class PlayerHandler extends Thread {
             InviteResponseModel inviteResponseModel = JsonWrapper.fromJson(clientMsg, InviteResponseModel.class);
             handleInviteResponse(inviteResponseModel);
 
+        } else if(jsonRecieveBase.getType().equals(RequestTypes.Logout.name())){
+        
+            LogoutModel logoutModel = JsonWrapper.fromJson(clientMessage, LogoutModel.class);
+        
         }
 
     }
