@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package base;
+
 import handlers.PlayerHandler;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -21,7 +22,6 @@ import javafx.stage.Stage;
 import models.Registration;
 import server.Server;
 
-
 /**
  *
  * @author Sasa Adel
@@ -35,7 +35,6 @@ public class ServerBase {
     Socket s;
 
     Thread serverThread;
- 
 
     public ServerBase() {
         System.out.println("Server object created");
@@ -45,6 +44,9 @@ public class ServerBase {
         if (isOn) {
             System.out.println("Server stopped");
             isOn = false;
+            for (Socket sc : clientsVector) {
+                sc.close();
+            }
             myServerSocket.close();
             serverThread.interrupt();
         }

@@ -20,7 +20,8 @@ public class OnlineGameModel extends JsonSendBase {
     private char currentPlayerMark;
 
     public OnlineGameModel() {
-        super.requestType = RequestTypes.Move.name();
+        super.requestType = RequestTypes.OnlineGame.name();
+
     }
 
     public char getCurrentPlayerMark() {
