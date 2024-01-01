@@ -252,6 +252,8 @@ public class PlayerHandler extends Thread {
                 PreparedStatement updatePlayerStatus = connection.con.prepareStatement("UPDATE player SET status = 0 WHERE user_name = ?");
                 updatePlayerStatus.setString(1, loggedoutUserName);
                 updatePlayerStatus.executeUpdate();
+                String jsonSend = JsonWrapper.toJson(jsonSendBase);
+                sendMessageToAll(jsonSend);
             } catch (SQLException ex) {
                 Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
