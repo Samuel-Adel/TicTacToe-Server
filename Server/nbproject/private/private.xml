@@ -4,6 +4,10 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/D:/iti/Java/Tic%20Tac%20Toe/TicTacToe-Server/Server/src/database/DataBaseManager.java</file>
+<<<<<<< HEAD
+=======
+            <file>file:/D:/iti/Java/Tic%20Tac%20Toe/TicTacToe-Server/Server/nbproject/jfx-impl.xml</file>
+>>>>>>> 1a6849581f4579eff4d36f4250de6ca89dcba173
             <file>file:/D:/iti/Java/Tic%20Tac%20Toe/TicTacToe-Server/Server/src/models/OnlineGameModel.java</file>
             <file>file:/D:/iti/Java/Tic%20Tac%20Toe/TicTacToe-Server/Server/src/screen/server_screen/ServerBaseScreen.java</file>
             <file>file:/D:/iti/Java/Tic%20Tac%20Toe/TicTacToe-Server/Server/src/server/Server.java</file>
