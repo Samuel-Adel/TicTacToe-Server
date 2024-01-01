@@ -86,6 +86,7 @@ public class PlayerHandler extends Thread {
 
             while (ear != null && currentSocket.isClosed() == false && (clientMsg = ear.readLine()) != null) {
                 handleOperation(clientMsg);
+                System.err.println("Client Message " + clientMsg);
 
             }
         } catch (SocketException ex) {
@@ -131,10 +132,6 @@ public class PlayerHandler extends Thread {
 
     private void handleOperation(String clientMessage) {
         jsonRecieveBase = JsonWrapper.fromJson(clientMsg, JsonReceiveBase.class);
-        if(jsonRecieveBase.getType().equals("OnlineGame")){
-                sendMessageToAll(clientMsg);
-        
-        }else 
         if (jsonRecieveBase.getType().equals(RequestTypes.Login.name())) {
             jsonSendBase.setType(RequestTypes.Login.name());
             LoginSendModel logineSendModel = new LoginSendModel();
@@ -164,8 +161,6 @@ public class PlayerHandler extends Thread {
                 } catch (SQLException ex) {
                     Logger.getLogger(PlayerHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
-
-                sendMessageToAll(jsonSend);
             } else {
                 jsonSend = JsonWrapper.toJson(jsonSendBase);
                 System.out.println(jsonSend);
@@ -194,29 +189,22 @@ public class PlayerHandler extends Thread {
                 mouth.println(jsonSend);
             }
         } else if (jsonRecieveBase.getType().equals(RequestTypes.OnlineGame.name())) {
-
+            System.err.println("Online Game Recieved Message");
             OnlineGameModel onlineGameModel = JsonWrapper.fromJson(clientMsg, OnlineGameModel.class);
-
-            new Thread(() -> {
-                String jsonData;
-                while (true) {
-
-                    if (onlineGameModel.getCurrentPlayerMark() == 'X') {
-                        onlineGameModel.setCurrentPlayerUserName(changeTurn(onlineGameModel));
-                        onlineGameModel.setCurrentPlayerMark('O');
-                        jsonData = JsonWrapper.toJson(onlineGameModel);
-                        mouth.println(jsonData);
-                    } else {
-                        onlineGameModel.setCurrentPlayerUserName(changeTurn(onlineGameModel));
-                        onlineGameModel.setCurrentPlayerMark('O');
-                        jsonData = JsonWrapper.toJson(onlineGameModel);
-                        mouth.println(jsonData);
-
-                    }
-
-                }
-            }).start();
-
+            String jsonData;
+            if (onlineGameModel.getCurrentPlayerMark() == 'X') {
+                onlineGameModel.setCurrentPlayerUserName(changeTurn(onlineGameModel));
+                onlineGameModel.setCurrentPlayerMark('X');
+                jsonData = JsonWrapper.toJson(onlineGameModel);
+                System.err.println("Online Game " + jsonData);
+                sendMessageToAll(jsonData);
+            } else {
+                onlineGameModel.setCurrentPlayerUserName(changeTurn(onlineGameModel));
+                onlineGameModel.setCurrentPlayerMark('O');
+                jsonData = JsonWrapper.toJson(onlineGameModel);
+                System.err.println("Online Game " + jsonData);
+                sendMessageToAll(jsonData);
+            }
         } else if (jsonRecieveBase.getType().equals(RequestTypes.AvailPlayers.name())) {
             ListDB list = new ListDB();
             System.out.println("The Username of the Player That Login is received");   //for Test
@@ -231,15 +219,11 @@ public class PlayerHandler extends Thread {
             String jsonPlayers = JsonWrapper.toJson(playerList);
             mouth.println(jsonPlayers);
             System.out.println("Json Format For PlayerList: " + jsonPlayers);
-
             broadcastActivePlayers();
         } else if (jsonRecieveBase.getType().equals(RequestTypes.Invite.name())) {
-
             System.out.println("First Message from Aya" + clientMsg);
             OnlineBoard onlineBoard = JsonWrapper.fromJson(clientMsg, OnlineBoard.class);
-
             String jsonSend;
-
             onlineBoard.setType(RequestTypes.Invite.name());
             jsonSend = JsonWrapper.toJson(onlineBoard);
             System.out.println(" First Message to Aya" + jsonSend);
@@ -256,10 +240,10 @@ public class PlayerHandler extends Thread {
 
     private String changeTurn(OnlineGameModel onlineGameModel) {
 
-        if (onlineGameModel.getCurrentPlayerUserName() == onlineGameModel.getPlayer1UserName()) {
+        if (onlineGameModel.getCurrentPlayerUserName().equals(onlineGameModel.getPlayer1UserName())) {
             return onlineGameModel.getPlayer2UserName();
         } else {
-            return onlineGameModel.getPlayer2UserName();
+            return onlineGameModel.getPlayer1UserName();
         }
     }
 

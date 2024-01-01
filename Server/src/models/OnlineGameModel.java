@@ -21,6 +21,7 @@ public class OnlineGameModel extends JsonSendBase {
 
     public OnlineGameModel() {
         super.requestType = RequestTypes.OnlineGame.name();
+
     }
 
     public char getCurrentPlayerMark() {

@@ -32,7 +32,7 @@ public class ListDB {
         
        ArrayList<Player> activePlayers = new ArrayList<>();
          try {
-             listStatement = dataBaseManager.con.prepareStatement("SELECT user_name, score FROM player WHERE status = 0" ,
+             listStatement = dataBaseManager.con.prepareStatement("SELECT user_name, score FROM player WHERE status = 1" ,
              ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
              listStatmentResult = listStatement.executeQuery();
 
