@@ -68,7 +68,6 @@ public class ServerBaseScreen extends AnchorPane {
         startStopButton.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         startStopButton.setFont(new Font("Comic Sans MS Bold", 20.0));
 
-
         startStopButton.setStyle(
                 "-fx-background-color: white; "
                 + "-fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0); "
@@ -95,9 +94,8 @@ public class ServerBaseScreen extends AnchorPane {
         lableIPIdress.setLayoutY(70);
         lableIPIdress.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         lableIPIdress.setVisible(false);
-        
+
         lableIPIdress.setFont(new Font("Comic Sans MS Bold", 15.0));
-        
 
         lableIPIdress.setLayoutY(14);
         lableIPIdress.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
@@ -123,7 +121,6 @@ public class ServerBaseScreen extends AnchorPane {
         lableNumOfPlayers.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         lableNumOfPlayers.setFont(new Font("Comic Sans MS Bold", 25.0));
 
-
         playersChart.setLayoutX(140.0);
 
         playersChart.setLayoutY(343.0);
@@ -147,11 +144,6 @@ public class ServerBaseScreen extends AnchorPane {
 
         setLablesInvisible();
         serverButton();
-        getNumOfOnlinePlayers();
-        getNumOfPlayers();
-
-        
-        
 
     }
 
@@ -159,6 +151,8 @@ public class ServerBaseScreen extends AnchorPane {
         startStopButton.setOnAction((event) -> {
             printIPAddress();
             if (startStopButton.getText().equals("Start")) {
+                getNumOfOnlinePlayers();
+                getNumOfPlayers();
                 try {
 
                     server.startServer();
@@ -215,7 +209,6 @@ public class ServerBaseScreen extends AnchorPane {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
                         Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
-
 
                         int numOfPlayers = resultSet.getInt("num_rows");
 
@@ -297,9 +290,7 @@ public class ServerBaseScreen extends AnchorPane {
     private void printIPAddress() {
         try {
 
-            
             InetAddress localhost = InetAddress.getLocalHost();
-
 
             lableIPIdress.setVisible(true);
             System.out.println("IP Address: " + localhost.getHostAddress());
