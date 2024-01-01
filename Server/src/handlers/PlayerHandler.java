@@ -158,7 +158,7 @@ public class PlayerHandler extends Thread {
                 jsonSend = JsonWrapper.toJson(logineSendModel);
                 System.out.println(jsonSend);
                 mouth.println(jsonSend);
-                sendMessageToAll(clientMsg);
+                sendMessageToAll(jsonSend);
                 DataBaseManager connection = dbManager;
                 try {
                     PreparedStatement preparedStatementUpdatePlayerStatus = connection.con.prepareStatement("UPDATE player SET status = 1 WHERE user_name = ?");
