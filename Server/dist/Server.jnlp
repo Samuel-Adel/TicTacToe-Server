@@ -8,18 +8,15 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="Server.jar" size="667428" download="eager" />
-<<<<<<< HEAD
-    <jar href="lib\derby.jar" size="2766479" download="eager" />
-    <jar href="lib\derbyclient.jar" size="576624" download="eager" />
-    <jar href="lib\derbynet.jar" size="248898" download="eager" />
-=======
+    <jar href="Server.jar" size="668539" download="eager" />
     <jar href="lib\derby.jar" size="3104883" download="eager" />
     <jar href="lib\derbyclient.jar" size="585704" download="eager" />
     <jar href="lib\derbynet.jar" size="266471" download="eager" />
->>>>>>> 783d2c76d7b0eccb71fc2589c956097fd2f303d1
     <jar href="lib\gson-2.2.2.jar" size="189285" download="eager" />
   </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="Server" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
   <jfx:javafx-desc  width="800" height="600" main-class="server.Server"  name="Server" />
   <update check="always"/>
 </jnlp>
