@@ -68,6 +68,21 @@ public class ServerBaseScreen extends AnchorPane {
         startStopButton.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         startStopButton.setFont(new Font("Comic Sans MS Bold", 20.0));
 
+        startStopButton.setStyle(
+                "-fx-background-color: white; "
+                + "-fx-effect: dropshadow(gaussian, black, 10, 0.5, 0, 0); "
+                + "-fx-border-color: black; "
+                + "-fx-border-width: 3px;"
+                + "-fx-background-radius: 10; "
+                + "-fx-border-radius: 10;"
+        );
+        stage.setOnCloseRequest((event) -> {
+            try {
+                server.closeServer();
+            } catch (IOException ex) {
+                Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
         label0.setLayoutX(50.0);
         label0.setLayoutY(99.0);
         label0.setText("Number of players");
@@ -75,12 +90,12 @@ public class ServerBaseScreen extends AnchorPane {
         label0.setFont(new Font("Comic Sans MS Bold", 25.0));
 
         lableIPIdress.setLayoutX(552.0);
-        lableIPIdress.setLayoutY(70);
+        lableIPIdress.setLayoutY(14);
         lableIPIdress.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         lableIPIdress.setVisible(false);
-        
+
         lableIPIdress.setFont(new Font("Comic Sans MS Bold", 15.0));
-        
+
         label1.setLayoutX(552.0);
         label1.setLayoutY(99.0);
         label1.setText("Online players");
@@ -99,7 +114,7 @@ public class ServerBaseScreen extends AnchorPane {
         lableNumOfPlayers.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         lableNumOfPlayers.setFont(new Font("Comic Sans MS Bold", 25.0));
 
-        playersChart.setLayoutX(212.0);
+        playersChart.setLayoutX(190.0);
         playersChart.setLayoutY(343.0);
         playersChart.setPrefHeight(200.0);
         playersChart.setPrefWidth(400.0);
@@ -118,12 +133,12 @@ public class ServerBaseScreen extends AnchorPane {
         getChildren().add(lableNumOfPlayers);
         getChildren().add(playersChart);
         getChildren().add(lableIPIdress);
+        
         setLablesInvisible();
         serverButton();
         getNumOfOnlinePlayers();
         getNumOfPlayers();
-        
-        
+
     }
 
     private void serverButton() {
@@ -131,7 +146,7 @@ public class ServerBaseScreen extends AnchorPane {
             printIPAddress();
             if (startStopButton.getText().equals("Start")) {
                 try {
-                    
+
                     server.startServer();
                 } catch (IOException ex) {
                     Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
@@ -146,6 +161,7 @@ public class ServerBaseScreen extends AnchorPane {
                     Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 startStopButton.setText("Start");
+
                 setLablesInvisible();
             }
         });
@@ -167,6 +183,18 @@ public class ServerBaseScreen extends AnchorPane {
                         Platform.runLater(() -> {
                             lableNumOfPlayers.setText(String.valueOf(numOfPlayers));
                             updateChart();
+                        });
+                    }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(ServerBaseScreen.class.getName()).log(Level.SEVERE, null, ex);
+
+                        int numOfPlayers = resultSet.getInt("num_rows");
+
+                        Platform.runLater(() -> {
+                            lableNumOfPlayers.setText(String.valueOf(numOfPlayers));
+
                         });
                     }
                     try {
@@ -232,6 +260,7 @@ public class ServerBaseScreen extends AnchorPane {
         lableNumOfOnlinePlayers.setVisible(true);
         lableNumOfPlayers.setVisible(true);
         playersChart.setVisible(true);
+
     }
 
     private void setLablesInvisible() {
@@ -251,15 +280,15 @@ public class ServerBaseScreen extends AnchorPane {
 
     private void printIPAddress() {
         try {
-            
+
             InetAddress localhost = InetAddress.getLocalHost();
 
-            
             lableIPIdress.setText("IP Address: " + localhost.getHostAddress());
             lableIPIdress.setVisible(true);
             System.out.println("IP Address: " + localhost.getHostAddress());
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+
     }
 }
