@@ -126,30 +126,10 @@ public class PlayerHandler extends Thread {
 
     private void handleOperation(String clientMessage) {
         jsonRecieveBase = JsonWrapper.fromJson(clientMsg, JsonReceiveBase.class);
-
-        // System.out.println("ss" + jsonRecieveBase.getType());
-//        String[] parts = clientMsg.split(" ", 2); // hna bfok el msg L 2 parts "mode" + json
-//        String mode = parts[0];
-//        String jsonData = parts.length > 1 ? parts[1] : "";
-//        System.out.println("mode" + mode);//bgrb bs eno faslhom
-//        System.out.println("json" + jsonData);//bgrb bs eno faslhom
-//
-//        if ("Register".equals(mode)) {
-//            // Handle registration
-//            // gson 
-//            Gson gson = new Gson();
-//            Registration registrationData = gson.fromJson(jsonData, Registration.class);
-//            //  System.out.println(registrationData);
-//            Registration player = new Registration();
-//            player = registrationData.registerPlayer(registrationData.getUsername(), registrationData.getPassword());
-//
-//            if (player.getUsername() != null) {
-//                mouth.println("ok");
-//            } else {
-//                mouth.println("exist");
-//            }
-//
-//        } else
+        if(jsonRecieveBase.getType().equals("OnlineGame")){
+                sendMessageToAll(clientMsg);
+        
+        }else 
         if (jsonRecieveBase.getType().equals(RequestTypes.Login.name())) {
             jsonSendBase.setType(RequestTypes.Login.name());
             LoginSendModel logineSendModel = new LoginSendModel();
