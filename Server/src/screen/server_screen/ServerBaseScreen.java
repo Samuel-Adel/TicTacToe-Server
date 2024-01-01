@@ -49,8 +49,8 @@ public class ServerBaseScreen extends AnchorPane {
         setMaxWidth(USE_PREF_SIZE);
         setMinHeight(USE_PREF_SIZE);
         setMinWidth(USE_PREF_SIZE);
-        setPrefHeight(560.0);
-        setPrefWidth(764.0);
+        setPrefHeight(660.0);
+        setPrefWidth(800.0);
         setStyle("-fx-background-color: #3C7CD7;");
 
         label.setLayoutX(301.0);
@@ -118,17 +118,17 @@ public class ServerBaseScreen extends AnchorPane {
         lableNumOfOnlinePlayers.setFont(new Font("Comic Sans MS Bold", 25.0));
 
         lableNumOfPlayers.setLayoutX(96.0);
-        lableNumOfPlayers.setLayoutY(180.0);
+        lableNumOfPlayers.setLayoutY(187.0);
         lableNumOfPlayers.setText("0");
         lableNumOfPlayers.setTextFill(javafx.scene.paint.Color.valueOf("#fcd015"));
         lableNumOfPlayers.setFont(new Font("Comic Sans MS Bold", 25.0));
 
 
-        playersChart.setLayoutX(190.0);
+        playersChart.setLayoutX(140.0);
 
         playersChart.setLayoutY(343.0);
-        playersChart.setPrefHeight(200.0);
-        playersChart.setPrefWidth(400.0);
+        playersChart.setPrefHeight(300.0);
+        playersChart.setPrefWidth(500.0);
         pieChartData = FXCollections.observableArrayList();
         PieChart.Data playersData = new PieChart.Data("Players", 0);
         PieChart.Data onlinePlayersData = new PieChart.Data("Online Players", 0);
@@ -300,7 +300,10 @@ public class ServerBaseScreen extends AnchorPane {
             
             InetAddress localhost = InetAddress.getLocalHost();
 
-           
+            
+
+
+
             lableIPIdress.setText("IP Address: " + localhost.getHostAddress());
             lableIPIdress.setVisible(true);
             System.out.println("IP Address: " + localhost.getHostAddress());
